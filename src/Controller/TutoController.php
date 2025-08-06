@@ -7,14 +7,26 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Repository\TutoRepository;
 
 final class TutoController extends AbstractController
 {
-    #[Route('/tuto', name: 'app_tuto')]
-    public function index(): Response
+    #[Route('/tuto/{id}', name: 'app_tuto')]
+    public function index(TutoRepository $tutorepository, int $id): Response
     {
+        
+        $tutos = $tutorepository->findOneById($id);
+        // $tutos = $tutorepository->findAll();
+      
+        
+       if(!$tutos) {
+         throw $this->createNotFoundException(
+            'No product found for id '.$id
+         );
+       }
         return $this->render('tuto/index.html.twig', [
             'controller_name' => 'TutoController',
+            'tuto' => $tutos
         ]);
     }
 
